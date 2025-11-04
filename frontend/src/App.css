@@ -1,0 +1,30 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.content-layout {
+  margin-left: 200px;
+  transition: margin-left 0.2s;
+}
+
+.content {
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  min-height: calc(100vh - 112px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .content-layout {
+    margin-left: 0;
+  }
+  
+  .content {
+    margin: 16px 8px;
+    padding: 16px;
+    min-height: calc(100vh - 80px);
+  }
+}
