@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Tag, Space, Button, Progress, Tooltip } from 'antd'
+import { Card, Tag, Space, Progress, Tooltip } from 'antd'
 import { 
   CalendarOutlined, 
   FileTextOutlined, 
@@ -7,6 +7,7 @@ import {
   EyeOutlined
 } from '@ant-design/icons'
 import { Project } from '../types/project'
+import Button from './Button'
 
 interface ProjectCardProps {
   project: Project
@@ -65,7 +66,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
       actions={[
         <Tooltip title="查看详情">
           <Button 
-            type="text" 
+            variant="text" 
             icon={<EyeOutlined />} 
             onClick={() => onView?.(project)}
           >
@@ -74,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
         </Tooltip>,
         <Tooltip title="编辑项目">
           <Button 
-            type="text" 
+            variant="text" 
             icon={<EditOutlined />} 
             onClick={() => onEdit?.(project)}
           >

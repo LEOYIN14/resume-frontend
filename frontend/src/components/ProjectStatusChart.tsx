@@ -69,7 +69,7 @@ const ProjectStatusChart: React.FC<ProjectStatusChartProps> = ({ projects }) => 
   }
 
   return (
-    <>
+    <div style={containerStyle}>
       {/* 项目总数卡片 */}
       <div style={totalCardStyle}>
         <Statistic 
@@ -117,9 +117,9 @@ const ProjectStatusChart: React.FC<ProjectStatusChartProps> = ({ projects }) => 
               {item.percentage.toFixed(1)}%
             </div>
           </div>
-        ))}
+          ))}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -257,34 +257,6 @@ const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
   e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)';
 };
 
-// 添加全局样式
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes progressAnimation {
-    to {
-      transform: translateX(0);
-    }
-  }
-  
-  /* 自定义滚动条 */
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 2px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-  }
-`;
-document.head.appendChild(style);
+// 移除全局样式注入，避免可能的副作用
 
 export default ProjectStatusChart;
