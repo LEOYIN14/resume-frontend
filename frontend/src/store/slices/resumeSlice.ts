@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { Resume, ResumeState } from '../../types/resume'
+import { ResumeState } from '../../types/resume'
 
 const initialState: ResumeState = {
   resume: null,
@@ -64,7 +64,7 @@ const resumeSlice = createSlice({
       .addCase(generateResume.pending, (state) => {
         state.generating = true
       })
-      .addCase(generateResume.fulfilled, (state, action) => {
+      .addCase(generateResume.fulfilled, (state) => {
         state.generating = false
       })
       .addCase(generateResume.rejected, (state, action) => {

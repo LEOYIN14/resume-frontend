@@ -26,6 +26,7 @@ const Projects: React.FC = () => {
   }
 
   const handleEditProject = (projectId: string) => {
+    console.log('编辑项目，ID:', projectId)
     navigate(`/projects/${projectId}/edit`)
   }
 

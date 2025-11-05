@@ -29,7 +29,7 @@ const mockProjects: Project[] = [
     title: 'AI营销实验室',
     description: 'AI驱动的营销工具平台，包含内容生成、数据分析等功能',
     status: 'in-progress',
-    priority: 'urgent',
+    priority: 'high',
     technologies: ['Python', 'FastAPI', 'React'],
     tags: ['AI', '营销', '数据分析'],
     startDate: new Date('2024-02-01').toISOString(),

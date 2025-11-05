@@ -12,20 +12,24 @@ import {
   message,
   Space,
   Divider,
-  Spin
+  Spin,
+  Typography,
+  Alert
 } from 'antd'
 import { 
   UploadOutlined, 
   ArrowLeftOutlined 
 } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from '../store/store'
+import { useDispatch } from 'react-redux'
 import { Project } from '../types/project'
-import { fetchProjectById, updateProject } from '../store/slices/projectSlice'
+import { updateProject } from '../store/slices/projectSlice'
+import { testHelper } from '../utils/testHelper'
+import { editPageDiagnostic } from '../utils/editPageDiagnostic'
 
 const { TextArea } = Input
 const { RangePicker } = DatePicker
+const { Title } = Typography
 
 const ProjectEdit: React.FC = () => {
   const [form] = Form.useForm()
@@ -37,74 +41,127 @@ const ProjectEdit: React.FC = () => {
   const [submitting, setSubmitting] = useState(false)
   const [fileList, setFileList] = useState<any[]>([])
   const [project, setProject] = useState<Project | null>(null)
+  const [error, setError] = useState<string>('')
+  const [formInitialized, setFormInitialized] = useState(false)
   
-  const projects = useSelector((state: RootState) => state.projects.projects)
-
+  // 数据加载逻辑 - 简化版本
   useEffect(() => {
-    const loadProject = async () => {
-      if (!id) {
-        message.error('项目ID不存在')
-        navigate('/projects')
-        return
-      }
+    console.log('🔧 编辑页面开始加载，项目ID:', id)
+    
+    if (!id) {
+      console.error('❌ 项目ID不存在')
+      setError('项目ID不存在')
+      message.error('项目ID不存在')
+      setTimeout(() => navigate('/projects'), 1000)
+      return
+    }
 
+    const loadProject = async () => {
       try {
         setLoading(true)
+        setError('')
         
-        // 首先从Redux store中查找项目
-        const existingProject = projects.find(p => p.id === id)
-        if (existingProject) {
-          setProject(existingProject)
-          populateForm(existingProject)
-        } else {
-          // 如果store中没有，尝试从API获取
-          const result = await dispatch(fetchProjectById(id) as any)
-          if (result.payload) {
-            setProject(result.payload)
-            populateForm(result.payload)
-          } else {
-            message.error('项目不存在')
-            navigate('/projects')
-          }
+        // 使用诊断工具检查数据
+        const diagnosticResult = editPageDiagnostic.checkEditPageStatus(id)
+        
+        if (!diagnosticResult) {
+          console.log('🔄 数据检查失败，尝试自动修复')
+          editPageDiagnostic.fixEditPageIssues(id)
+          return
         }
+        
+        // 直接从localStorage获取项目数据
+        const storedProjects = localStorage.getItem('projects')
+        
+        if (!storedProjects) {
+          setError('没有找到项目数据，请先创建项目或初始化测试数据')
+          message.error('没有找到项目数据')
+          setLoading(false)
+          return
+        }
+        
+        const projects = JSON.parse(storedProjects)
+        const foundProject = projects.find((p: Project) => p.id === id)
+        
+        if (!foundProject) {
+          setError(`项目不存在，ID: ${id}`)
+          message.error('项目不存在')
+          setLoading(false)
+          return
+        }
+        
+        console.log('✅ 找到项目数据:', foundProject)
+        setProject(foundProject)
+        
+        // 设置文件列表
+        if (foundProject.documents && foundProject.documents.length > 0) {
+          const files = foundProject.documents.map(doc => ({
+            uid: doc.id,
+            name: doc.name,
+            status: 'done',
+            url: doc.url,
+            size: doc.size
+          }))
+          setFileList(files)
+        }
+        
       } catch (error) {
-        console.error('加载项目失败:', error)
+        console.error('❌ 加载项目失败:', error)
+        setError('加载项目失败: ' + error.message)
         message.error('加载项目失败')
-        navigate('/projects')
       } finally {
         setLoading(false)
       }
     }
 
     loadProject()
-  }, [id, dispatch, navigate, projects])
+  }, [id, navigate])
+  
+  // 当项目数据加载完成后，填充表单 - 简化版本
+  useEffect(() => {
+    if (project && !loading && !formInitialized) {
+      console.log('🔄 开始填充表单数据')
+      
+      // 立即填充表单，不使用setTimeout
+      try {
+        const formValues = getFormValues(project)
+        console.log('📋 表单初始值:', formValues)
+        
+        form.setFieldsValue(formValues)
+        console.log('✅ 表单填充完成')
+        setFormInitialized(true)
+      } catch (formError) {
+        console.error('❌ 表单填充失败:', formError)
+        
+        // 如果失败，使用更安全的方式
+        setTimeout(() => {
+          try {
+            const formValues = getFormValues(project)
+            form.resetFields()
+            form.setFieldsValue(formValues)
+            console.log('✅ 表单重新填充完成')
+            setFormInitialized(true)
+          } catch (secondError) {
+            console.error('❌ 第二次表单填充失败:', secondError)
+          }
+        }, 100)
+      }
+    }
+  }, [project, loading, form, formInitialized])
 
-  const populateForm = (projectData: Project) => {
-    form.setFieldsValue({
-      title: projectData.title,
-      description: projectData.description,
-      status: projectData.status,
-      priority: projectData.priority,
+  const getFormValues = (projectData: Project) => {
+    // 对于RangePicker，我们需要更加谨慎地处理日期
+    // 当没有有效日期时，直接返回undefined，让RangePicker保持空白状态
+    return {
+      title: projectData.title || '',
+      description: projectData.description || '',
+      status: projectData.status || 'planning',
+      priority: projectData.priority || 'medium',
       technologies: projectData.technologies || [],
       tags: projectData.tags || [],
-      period: projectData.endDate 
-        ? [
-            projectData.startDate ? new Date(projectData.startDate) : null,
-            projectData.endDate ? new Date(projectData.endDate) : null
-          ]
-        : projectData.startDate ? [new Date(projectData.startDate), null] : null
-    })
-
-    // 设置文件列表
-    if (projectData.documents && projectData.documents.length > 0) {
-      const files = projectData.documents.map(doc => ({
-        uid: doc.id,
-        name: doc.name,
-        status: 'done',
-        url: doc.url,
-        size: doc.size
-      }))
-      setFileList(files)
+      // 不设置period初始值，让RangePicker从空白状态开始
+      // 这样可以避免日期格式不匹配导致的isValid is not a function错误
+      period: undefined
     }
   }
 
@@ -122,8 +179,14 @@ const ProjectEdit: React.FC = () => {
         priority: values.priority,
         technologies: values.technologies || [],
         tags: values.tags || [],
-        startDate: values.period ? values.period[0].toISOString() : new Date().toISOString(),
-        endDate: values.period ? values.period[1]?.toISOString() : undefined,
+        startDate: values.period && values.period[0] ? 
+          typeof values.period[0] === 'string' ? values.period[0] : 
+          values.period[0].toISOString ? values.period[0].toISOString() : new Date().toISOString() : 
+          new Date().toISOString(),
+        endDate: values.period && values.period[1] ? 
+          typeof values.period[1] === 'string' ? values.period[1] : 
+          values.period[1].toISOString ? values.period[1].toISOString() : undefined : 
+          undefined,
         documents: fileList.map(file => ({
           id: file.uid,
           name: file.name,
@@ -135,13 +198,12 @@ const ProjectEdit: React.FC = () => {
         updatedAt: new Date().toISOString()
       }
       
-      // 调用Redux action更新项目数据
       await dispatch(updateProject(projectData) as any)
       
       message.success('项目更新成功!')
       navigate(`/projects/${project.id}`)
     } catch (error) {
-      console.error('更新项目失败:', error)
+      console.error('❌ 更新项目失败:', error)
       message.error('更新项目失败')
     } finally {
       setSubmitting(false)
@@ -163,22 +225,91 @@ const ProjectEdit: React.FC = () => {
     multiple: true
   }
 
+  // 初始化测试数据（开发环境使用）
+  const initTestData = () => {
+    testHelper.initTestData()
+    message.success('测试数据初始化完成')
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
+  }
+
+  // 运行诊断工具
+  const runDiagnostic = () => {
+    if (id) {
+      editPageDiagnostic.runFullDiagnostic(id)
+    }
+  }
+
+  // 强制刷新页面
+  const forceRefresh = () => {
+    window.location.reload()
+  }
+
   if (loading) {
     return (
-      <div style={{ padding: '50px', textAlign: 'center' }}>
+      <div style={{ padding: '100px', textAlign: 'center' }}>
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>加载中...</div>
+        <div style={{ marginTop: 16 }}>加载项目数据中...</div>
+        <div style={{ fontSize: '12px', color: '#666', marginTop: 8 }}>
+          当前项目ID: {id}
+        </div>
+        {error && (
+          <Alert 
+            message="加载错误" 
+            description={error} 
+            type="error" 
+            style={{ marginTop: 16, maxWidth: 400, margin: '16px auto' }}
+          />
+        )}
+        {process.env.NODE_ENV === 'development' && (
+          <div style={{ marginTop: 16 }}>
+            <Button type="link" onClick={initTestData} style={{ marginRight: 8 }}>
+              初始化测试数据
+            </Button>
+            <Button type="link" onClick={runDiagnostic} style={{ marginRight: 8 }}>
+              运行诊断
+            </Button>
+            <Button type="link" onClick={forceRefresh}>
+              强制刷新
+            </Button>
+          </div>
+        )}
       </div>
     )
   }
 
   if (!project) {
     return (
-      <div style={{ padding: '50px', textAlign: 'center' }}>
-        <h2>项目不存在</h2>
-        <Button type="primary" onClick={() => navigate('/projects')}>
+      <div style={{ padding: '100px', textAlign: 'center' }}>
+        <Title level={3}>项目不存在</Title>
+        <div style={{ fontSize: '14px', color: '#666', marginBottom: 16 }}>
+          项目ID: {id}
+        </div>
+        {error && (
+          <Alert 
+            message="错误信息" 
+            description={error} 
+            type="error" 
+            style={{ marginBottom: 16, maxWidth: 400, margin: '0 auto' }}
+          />
+        )}
+        <Button type="primary" onClick={() => navigate('/projects')} style={{ marginRight: 8 }}>
           返回项目列表
         </Button>
+        {process.env.NODE_ENV === 'development' && (
+          <>
+            <Button type="link" onClick={initTestData} style={{ marginTop: 16, display: 'block' }}>
+              初始化测试数据
+            </Button>
+            <Button type="link" onClick={runDiagnostic} style={{ marginTop: 8, display: 'block' }}>
+              运行诊断工具
+            </Button>
+            <Button type="link" onClick={forceRefresh} style={{ marginTop: 8 }}>
+              刷新页面
+            </Button>
+          </>
+        )}
       </div>
     )
   }
@@ -191,11 +322,24 @@ const ProjectEdit: React.FC = () => {
             <Button 
               type="text" 
               icon={<ArrowLeftOutlined />} 
-              onClick={() => navigate(`/projects/${project.id}`)}
+              onClick={() => {
+                // 检查是否有历史记录可以返回
+                if (window.history.length > 1) {
+                  navigate(-1)
+                } else {
+                  // 如果没有历史记录，返回项目详情页
+                  navigate(`/projects/${project.id}`)
+                }
+              }}
             >
-              返回项目详情
+              返回上一页
             </Button>
-            <h2 style={{ margin: '16px 0' }}>编辑项目</h2>
+            <Title level={2} style={{ margin: '16px 0' }}>编辑项目</Title>
+            {process.env.NODE_ENV === 'development' && (
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                项目ID: {project.id} | 项目标题: {project.title} | 表单状态: {formInitialized ? '已初始化' : '未初始化'}
+              </div>
+            )}
           </div>
 
           <Form
@@ -261,7 +405,7 @@ const ProjectEdit: React.FC = () => {
                     <Select.Option value="low">低</Select.Option>
                     <Select.Option value="medium">中</Select.Option>
                     <Select.Option value="high">高</Select.Option>
-                    <Select.Option value="urgent">紧急</Select.Option>
+                    {/* <Select.Option value="urgent">紧急</Select.Option> */}
                   </Select>
                 </Form.Item>
               </Col>

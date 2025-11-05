@@ -141,12 +141,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
         <div style={{ marginTop: 12 }}>
           <Space wrap size={[4, 4]}>
             {project.technologies.slice(0, 3).map((tech, index) => (
-              <Tag key={index} color="blue" size="small">
+              <Tag key={index} color="blue">
                 {tech}
               </Tag>
             ))}
             {project.technologies.length > 3 && (
-              <Tag size="small">+{project.technologies.length - 3}</Tag>
+              <Tag>+{project.technologies.length - 3}</Tag>
             )}
           </Space>
         </div>
@@ -156,7 +156,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
         <div style={{ marginTop: 8 }}>
           <Space wrap size={[4, 4]}>
             {project.tags.slice(0, 3).map((tag, index) => (
-              <Tag key={index} color="green" size="small">
+              <Tag key={index} color="green">
                 {tag}
               </Tag>
             ))}

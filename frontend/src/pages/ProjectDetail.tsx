@@ -149,9 +149,17 @@ const ProjectDetail: React.FC = () => {
               <Button 
                 type="text" 
                 icon={<ArrowLeftOutlined />} 
-                onClick={() => navigate('/projects')}
+                onClick={() => {
+                  // 检查是否有历史记录可以返回
+                  if (window.history.length > 1) {
+                    navigate(-1)
+                  } else {
+                    // 如果没有历史记录，返回项目列表页
+                    navigate('/projects')
+                  }
+                }}
               >
-                返回项目列表
+                返回上一页
               </Button>
               <Divider type="vertical" />
               <Button 
