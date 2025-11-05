@@ -17,11 +17,11 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'success'
-      case 'in-progress': return 'processing'
-      case 'planning': return 'default'
-      case 'on-hold': return 'warning'
-      default: return 'default'
+      case 'completed': return '#14B8A6'
+      case 'in-progress': return '#3B82F6'
+      case 'planning': return '#6366F1'
+      case 'on-hold': return '#F97316'
+      default: return '#6366F1'
     }
   }
 
@@ -37,11 +37,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'red'
-      case 'high': return 'orange'
-      case 'medium': return 'blue'
-      case 'low': return 'green'
-      default: return 'default'
+      case 'urgent': return '#EF4444'
+      case 'high': return '#F97316'
+      case 'medium': return '#3B82F6'
+      case 'low': return '#14B8A6'
+      default: return '#6366F1'
     }
   }
 
@@ -115,8 +115,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
           size="small" 
           showInfo={false}
           strokeColor={{
-            '0%': '#108ee9',
-            '100%': '#87d068',
+            '0%': '#3B82F6',
+            '100%': '#14B8A6',
           }}
         />
       </div>
@@ -141,7 +141,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
         <div style={{ marginTop: 12 }}>
           <Space wrap size={[4, 4]}>
             {project.technologies.slice(0, 3).map((tech, index) => (
-              <Tag key={index} color="blue">
+              <Tag key={index} color="#3B82F6">
                 {tech}
               </Tag>
             ))}
@@ -156,7 +156,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
         <div style={{ marginTop: 8 }}>
           <Space wrap size={[4, 4]}>
             {project.tags.slice(0, 3).map((tag, index) => (
-              <Tag key={index} color="green">
+              <Tag key={index} color="#14B8A6">
                 {tag}
               </Tag>
             ))}

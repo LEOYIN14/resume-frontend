@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={{ display: 'flex', alignItems: 'stretch' }}>
         <Col xs={24} lg={16}>
           <Card 
             title={
@@ -158,7 +158,7 @@ const Dashboard: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="项目状态分布" style={{ height: 400 }}>
+          <Card title="项目状态分布">
             {projects.length > 0 ? (
               <ProjectStatusChart projects={projects} />
             ) : (
