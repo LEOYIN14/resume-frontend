@@ -11,6 +11,7 @@ import ProjectEdit from './pages/ProjectEdit'
 import Resume from './pages/Resume'
 import Skills from './pages/Skills'
 import Settings from './pages/Settings'
+
 import './App.css'
 
 const { Content } = Layout
@@ -32,6 +33,7 @@ const App: React.FC = () => {
               <Route path="/resume" element={<Resume />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/settings" element={<Settings />} />
+
             </Routes>
           </Content>
         </Layout>

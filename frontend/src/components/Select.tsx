@@ -35,7 +35,7 @@ const Select: React.FC<SelectProps> = ({
   placeholder,
   error,
   disabled = false,
-  multiple = false,
+  // multiple参数暂时未使用
   size = 'middle',
   className,
   style,
@@ -51,8 +51,7 @@ const Select: React.FC<SelectProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        multiple={multiple}
-        size={selectSize}
+        size={selectSize as any}
         status={error ? 'error' : undefined}
       >
         {options.map((option) => (

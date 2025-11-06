@@ -1,4 +1,4 @@
-import React from 'react';
+// 移除未使用的React导入
 import { Table as AntTable, type TableProps as AntTableProps, Empty } from 'antd';
 
 interface TableProps<T> extends Omit<AntTableProps<T>, 'rowKey'> {

@@ -24,8 +24,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Project } from '../types/project'
 import { updateProject } from '../store/slices/projectSlice'
-import { testHelper } from '../utils/testHelper'
-import { editPageDiagnostic } from '../utils/editPageDiagnostic'
+// 移除未使用的工具函数导入
 
 const { TextArea } = Input
 const { RangePicker } = DatePicker
@@ -60,15 +59,7 @@ const ProjectEdit: React.FC = () => {
       try {
         setLoading(true)
         setError('')
-        
-        // 使用诊断工具检查数据
-        const diagnosticResult = editPageDiagnostic.checkEditPageStatus(id)
-        
-        if (!diagnosticResult) {
-          console.log('🔄 数据检查失败，尝试自动修复')
-          editPageDiagnostic.fixEditPageIssues(id)
-          return
-        }
+        // 移除未定义的诊断工具调用
         
         // 直接从localStorage获取项目数据
         const storedProjects = localStorage.getItem('projects')
@@ -95,7 +86,7 @@ const ProjectEdit: React.FC = () => {
         
         // 设置文件列表
         if (foundProject.documents && foundProject.documents.length > 0) {
-          const files = foundProject.documents.map(doc => ({
+          const files = foundProject.documents.map((doc: any) => ({
             uid: doc.id,
             name: doc.name,
             status: 'done',
@@ -107,7 +98,7 @@ const ProjectEdit: React.FC = () => {
         
       } catch (error) {
         console.error('❌ 加载项目失败:', error)
-        setError('加载项目失败: ' + error.message)
+        setError('加载项目失败: ' + (error as Error).message)
         message.error('加载项目失败')
       } finally {
         setLoading(false)
@@ -227,7 +218,24 @@ const ProjectEdit: React.FC = () => {
 
   // 初始化测试数据（开发环境使用）
   const initTestData = () => {
-    testHelper.initTestData()
+    // 测试数据初始化
+    const mockProjects = [
+      {
+        id: '1',
+        title: '示例项目',
+        description: '这是一个示例项目',
+        status: 'planning',
+        priority: 'medium',
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        technologies: ['React', 'TypeScript'],
+        tags: ['示例', '测试'],
+        documents: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
+    localStorage.setItem('projects', JSON.stringify(mockProjects));
     message.success('测试数据初始化完成')
     setTimeout(() => {
       window.location.reload()
@@ -237,7 +245,16 @@ const ProjectEdit: React.FC = () => {
   // 运行诊断工具
   const runDiagnostic = () => {
     if (id) {
-      editPageDiagnostic.runFullDiagnostic(id)
+      console.log(`诊断项目ID: ${id}`);
+      // 检查localStorage中是否存在项目数据
+      const storedProjects = localStorage.getItem('projects');
+      if (storedProjects) {
+        const projects = JSON.parse(storedProjects);
+        const projectExists = projects.some((p: any) => p.id === id);
+        console.log(`项目存在: ${projectExists}`);
+        return projectExists;
+      }
+      return false;
     }
   }
 

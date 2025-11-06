@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Tag, Space, Progress, Tooltip } from 'antd'
+import { Card, Tag, Space, Progress, Tooltip, Typography, Row, Col } from 'antd'
 import { 
   CalendarOutlined, 
   FileTextOutlined, 
@@ -13,9 +13,12 @@ interface ProjectCardProps {
   project: Project
   onView?: (project: Project) => void
   onEdit?: (project: Project) => void
+  listView?: boolean
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) => {
+const { Text } = Typography
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit, listView = false }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return '#14B8A6'
@@ -60,6 +63,58 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit }) =>
     }
   }
 
+  // 列表视图渲染
+  if (listView) {
+    return (
+      <Row gutter={[16, 16]} align="middle" style={{ width: '100%', padding: '12px', borderBottom: '1px solid #f0f0f0' }}>
+        <Col xs={24} sm={12} md={8}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <FileTextOutlined style={{ fontSize: '20px', color: '#1890ff' }} />
+            <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>{project.title}</h4>
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={4}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Tag color={getPriorityColor(project.priority)}>
+              {project.priority}
+            </Tag>
+            <Tag color={getStatusColor(project.status)}>
+              {getStatusText(project.status)}
+            </Tag>
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <Text>进度：</Text>
+              <Text strong>{getProgress()}%</Text>
+            </div>
+            <Progress percent={getProgress()} size="small" showInfo={false} />
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={6} style={{ textAlign: 'right' }}>
+          <Space>
+            <Button 
+              variant="text" 
+              icon={<EyeOutlined />} 
+              onClick={() => onView?.(project)}
+            >
+              查看
+            </Button>
+            <Button 
+              variant="text" 
+              icon={<EditOutlined />} 
+              onClick={() => onEdit?.(project)}
+            >
+              编辑
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+    )
+  }
+
+  // 网格视图渲染
   return (
     <Card
       style={{ marginBottom: 16 }}

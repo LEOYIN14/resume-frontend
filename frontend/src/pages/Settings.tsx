@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Card, Form, Input, Button, Switch, Divider } from 'antd'
+import { Typography, Card, Form, Input, Button, Switch } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 
 const { Title } = Typography

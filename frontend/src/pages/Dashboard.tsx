@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Row, Col, Card, Statistic, Typography, Button, Empty, Spin } from 'antd'
-import { ProjectOutlined, ToolOutlined, FileTextOutlined, RocketOutlined, PlusOutlined } from '@ant-design/icons'
+import { Row, Col, Card, Typography, Button, Empty, Spin } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ProjectCard from '../components/ProjectCard'
@@ -71,6 +71,7 @@ const Dashboard: React.FC = () => {
     navigate(`/projects/${project.id}/edit`)
   }
 
+  // 计算额外统计数据
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
@@ -83,44 +84,7 @@ const Dashboard: React.FC = () => {
     <div>
       <Title level={2}>工作台</Title>
       
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="项目总数"
-              value={projects.length}
-              prefix={<ProjectOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="进行中项目"
-              value={projects.filter(p => p.status === 'in-progress').length}
-              prefix={<ToolOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="已完成项目"
-              value={projects.filter(p => p.status === 'completed').length}
-              prefix={<FileTextOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="总文件数"
-              value={projects.reduce((total, p) => total + (p.documents?.length || 0), 0)}
-              prefix={<RocketOutlined />}
-            />
-          </Card>
-        </Col>
-      </Row>
+
 
       <Row gutter={[16, 16]} style={{ display: 'flex', alignItems: 'stretch' }}>
         <Col xs={24} lg={16}>
@@ -133,9 +97,10 @@ const Dashboard: React.FC = () => {
                 </Button>
               </div>
             }
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
           >
             {projects.length > 0 ? (
-              <div style={{ maxHeight: 500, overflowY: 'auto' }}>
+              <div style={{ flex: 1, overflowY: 'auto' }}>
                 {projects.map(project => (
                   <ProjectCard
                     key={project.id}
@@ -158,9 +123,22 @@ const Dashboard: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="项目状态分布">
+          <Card 
+            title={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                项目状态分布
+              </div>
+            }
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
             {projects.length > 0 ? (
-              <ProjectStatusChart projects={projects} />
+              <div style={{ flex: 1 }}>
+                <ProjectStatusChart 
+                  projects={projects} 
+                  showLegend={true}
+                  size={200}
+                />
+              </div>
             ) : (
               <div style={{ textAlign: 'center', color: '#999', marginTop: 100 }}>
                 暂无项目数据

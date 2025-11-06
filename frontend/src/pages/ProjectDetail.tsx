@@ -15,8 +15,7 @@ import {
   ArrowLeftOutlined, 
   EditOutlined,
   FileOutlined,
-  CalendarOutlined,
-  UserOutlined
+  CalendarOutlined
 } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'

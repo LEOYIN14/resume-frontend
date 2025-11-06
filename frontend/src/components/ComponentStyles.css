@@ -1,0 +1,387 @@
+/* 组件样式文件 - 为所有自定义组件提供统一的样式和交互效果 */
+
+/* 通用容器样式 */
+.input-wrapper,
+.select-wrapper,
+.date-picker-wrapper,
+.time-picker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 通用标签样式 */
+.input-label,
+.select-label,
+.date-picker-label,
+.time-picker-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  transition: color 0.3s ease;
+}
+
+/* 通用错误信息样式 */
+.input-error,
+.select-error,
+.date-picker-error,
+.time-picker-error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ff4d4f;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 按钮样式增强 - 更简洁丝滑的交互 */
+.ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease-out;
+}
+
+.ant-btn:hover {
+  transform: none; /* 移除向上移动效果 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ant-btn:active {
+  transform: none;
+}
+
+/* 主要按钮样式优化 - 使用更柔和的颜色，避免过于鲜艳突兀 */
+.ant-btn-primary {
+  background-color: #4a89dc; /* 更柔和的蓝色 */
+  border: none;
+  box-shadow: 0 1px 2px rgba(74, 137, 220, 0.2);
+}
+
+.ant-btn-primary:hover {
+  background-color: #5d9cec;
+  box-shadow: 0 2px 4px rgba(74, 137, 220, 0.3);
+}
+
+.ant-btn-primary:active {
+  background-color: #3e7ac2;
+  box-shadow: 0 1px 2px rgba(74, 137, 220, 0.2);
+}
+
+/* 危险按钮样式优化 - 使用更柔和的红色，避免过于刺眼 */
+.ant-btn-danger {
+  background-color: #e74c3c;
+  border: none;
+  box-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+.ant-btn-danger:hover {
+  background-color: #ec7063;
+  box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.ant-btn-danger:active {
+  background-color: #c0392b;
+  box-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+.ant-btn:focus {
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+/* 输入框样式增强 - 简化过渡效果 */
+.ant-input {
+  /* 简化过渡效果，避免闪烁 */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 6px;
+  border-color: #d9d9d9;
+  padding: 8px 12px;
+}
+
+.ant-input:hover {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.ant-input:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  outline: none;
+}
+
+.ant-input:disabled {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  color: #bfbfbf;
+}
+
+/* 选择器样式优化 - 解决展示不全和字体显示问题 */
+.select-wrapper {
+  /* 确保选择器容器有足够的宽度 */
+  width: 100%;
+}
+
+/* 选择器基础样式 */
+.ant-select {
+  /* 确保选择器本身宽度正确 */
+  width: 100%;
+}
+
+.ant-select-selector {
+  /* 添加合适的内边距，确保内容完整显示 */
+  padding: 0 11px !important;
+  height: auto !important;
+  min-height: 32px !important;
+  border-radius: 6px !important;
+  border-color: #d9d9d9 !important;
+  display: flex;
+  align-items: center;
+}
+
+.ant-select:hover .ant-select-selector {
+  border-color: #4a89dc !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #4a89dc !important;
+  box-shadow: 0 0 0 2px rgba(74, 137, 220, 0.2) !important;
+}
+
+/* 下拉菜单样式 */
+.ant-select-dropdown {
+  /* 确保下拉菜单正确显示 */
+  min-width: 120px;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/* 优化选项样式，解决悬停字体显示问题 */
+.ant-select-item {
+  padding: 8px 16px;
+  font-size: 14px;
+  line-height: 1.5715;
+  word-break: break-all;
+  white-space: normal;
+  overflow: visible;
+}
+
+.ant-select-item-option {
+  /* 确保选项内容正确显示 */
+  width: 100%;
+}
+
+.ant-select-item-option-content {
+  /* 确保选项文本正确显示 */
+  width: 100%;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.ant-select-item:hover {
+  background-color: #f5f5f5;
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #e6f7ff;
+  color: #4a89dc;
+}
+
+/* 修复单选选择器的展示问题 */
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  padding: 0;
+  line-height: 1.5715;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+/* 日期和时间选择器样式 - 优化交互体验 */
+.ant-picker {
+  /* 简化样式，避免干扰默认行为 */
+  border-radius: 6px;
+  border-color: #d9d9d9;
+}
+
+.ant-picker:hover,
+.ant-picker-focused {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  outline: none;
+}
+
+/* 完全移除对日期选择器下拉菜单的样式修改 */
+.ant-picker-dropdown {
+  /* 完全使用Ant Design默认样式，确保正常关闭和交互 */
+}
+
+/* 优化时间选择器的可用性 */
+.time-picker-wrapper {
+  /* 为时间选择器添加额外的内边距，提升可用性 */
+}
+
+.ant-picker-time-panel {
+  /* 优化时间选择器面板样式 */
+}
+
+.ant-picker-time-panel-column > li:hover:not(.ant-picker-time-panel-cell-disabled) .ant-picker-time-panel-cell-inner {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background-color: #1890ff;
+  color: white;
+  border-radius: 4px;
+}
+
+/* 表格样式增强 */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 表格操作按钮样式 - 更柔和的样式，避免在表格中过于突兀 */
+.ant-table .ant-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  height: 24px;
+}
+
+/* 表格中的编辑按钮使用次要样式而不是主要样式 */
+.ant-table .ant-btn-primary {
+  background-color: #f0f2f5;
+  color: #4a89dc;
+  border: 1px solid #d9d9d9;
+  box-shadow: none;
+}
+
+.ant-table .ant-btn-primary:hover {
+  background-color: #e6f7ff;
+  color: #4a89dc;
+  border-color: #4a89dc;
+  box-shadow: 0 1px 2px rgba(74, 137, 220, 0.2);
+}
+
+/* 表格中的删除按钮使用更柔和的样式 */
+.ant-table .ant-btn-danger {
+  background-color: #f0f2f5;
+  color: #e74c3c;
+  border: 1px solid #d9d9d9;
+  box-shadow: none;
+}
+
+.ant-table .ant-btn-danger:hover {
+  background-color: #fff1f0;
+  color: #e74c3c;
+  border-color: #e74c3c;
+  box-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+.ant-table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 500;
+  color: #262626;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+.ant-table-tbody > tr:hover {
+  background-color: #f5f5f5;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 卡片样式增强 */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 状态标签样式 */
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-active {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.status-inactive {
+  background-color: #fff2e8;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+}
+
+.status-pending {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+/* 表单组合样式 */
+.form-item {
+  margin-bottom: 24px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ant-card {
+    margin-bottom: 16px;
+  }
+  
+  .ant-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .ant-space {
+    width: 100%;
+  }
+}

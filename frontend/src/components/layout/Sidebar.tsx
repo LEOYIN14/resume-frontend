@@ -5,7 +5,8 @@ import {
   ProjectOutlined, 
   FileTextOutlined, 
   ToolOutlined,
-  SettingOutlined 
+  SettingOutlined,
+  AppstoreOutlined
 } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -40,6 +41,11 @@ const Sidebar: React.FC = () => {
       key: '/settings',
       icon: <SettingOutlined />,
       label: '系统设置',
+    },
+    {
+      key: '/component-test',
+      icon: <AppstoreOutlined />,
+      label: '组件测试',
     },
   ]
 

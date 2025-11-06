@@ -15,7 +15,6 @@ import {
 } from 'antd'
 import { 
   UploadOutlined, 
-  PlusOutlined, 
   ArrowLeftOutlined 
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
