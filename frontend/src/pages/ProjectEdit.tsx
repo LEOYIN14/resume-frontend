@@ -191,11 +191,11 @@ const ProjectEdit: React.FC = () => {
       
       await dispatch(updateProject(projectData) as any)
       
-      message.success('项目更新成功!')
+      message.success('项目更新成功! 简历将自动更新')
       navigate(`/projects/${project.id}`)
     } catch (error) {
       console.error('❌ 更新项目失败:', error)
-      message.error('更新项目失败')
+      message.error('更新项目失败，请重试')
     } finally {
       setSubmitting(false)
     }

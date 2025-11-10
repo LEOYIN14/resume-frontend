@@ -21,6 +21,13 @@ export interface PersonalInfo {
   github?: string
   linkedin?: string
   bio: string
+  photo?: string
+  gender?: string
+  age?: string
+  hometown?: string
+  height?: string
+  marriageStatus?: string
+  politicalStatus?: string
 }
 
 export interface Experience {

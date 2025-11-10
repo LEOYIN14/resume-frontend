@@ -55,11 +55,11 @@ const ProjectCreate: React.FC = () => {
       // 调用Redux action保存项目数据
       await dispatch(createProject(projectData) as any)
       
-      message.success('项目创建成功!')
+      message.success('项目创建成功! 简历将自动更新')
       navigate('/projects')
     } catch (error) {
       console.error('创建项目失败:', error)
-      message.error('创建项目失败')
+      message.error('创建项目失败，请重试')
     }
   }
 

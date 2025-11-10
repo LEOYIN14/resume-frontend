@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Typography, Button, Space, Card, List, Tag, Empty, Spin, Row, Col, Input, Select, Radio } from 'antd'
-import { PlusOutlined, CalendarOutlined, FileTextOutlined, EyeOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { Typography, Button, Space, Card, List, Tag, Empty, Spin, Row, Col, Input, Select, Radio, Modal, message } from 'antd'
+import { PlusOutlined, CalendarOutlined, FileTextOutlined, EyeOutlined, EditOutlined, SearchOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchProjects } from '../store/slices/projectSlice'
+import { fetchProjects, deleteProject } from '../store/slices/projectSlice'
 import { RootState } from '../store/store'
 import ProjectCard from '../components/ProjectCard'
 
@@ -33,6 +33,26 @@ const Projects: React.FC = () => {
   const handleEditProject = (projectId: string) => {
     console.log('编辑项目，ID:', projectId)
     navigate(`/projects/${projectId}/edit`)
+  }
+
+  // 删除项目
+  const handleDeleteProject = (projectId: string, projectName: string) => {
+    Modal.confirm({
+      title: '确认删除项目',
+      content: `确定要删除项目 "${projectName}" 吗？此操作不可撤销。删除后简历将自动更新。`,
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          await dispatch(deleteProject(projectId) as any)
+          message.success('项目删除成功! 简历将自动更新')
+        } catch (error) {
+          console.error('删除项目失败:', error)
+          message.error('删除项目失败，请重试')
+        }
+      }
+    })
   }
 
   const getStatusColor = (status: string) => {
@@ -284,6 +304,7 @@ const Projects: React.FC = () => {
                   project={project}
                   onView={() => handleViewProject(project.id)}
                   onEdit={() => handleEditProject(project.id)}
+                  onDelete={() => handleDeleteProject(project.id, project.title)}
                 />
               </Col>
             ))}
@@ -308,6 +329,14 @@ const Projects: React.FC = () => {
                       onClick={() => handleEditProject(project.id)}
                     >
                       编辑
+                    </Button>,
+                    <Button 
+                      type="text" 
+                      danger
+                      icon={<DeleteOutlined />} 
+                      onClick={() => handleDeleteProject(project.id, project.title)}
+                    >
+                      删除
                     </Button>
                   ]}
                 >

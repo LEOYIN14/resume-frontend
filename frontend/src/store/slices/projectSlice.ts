@@ -127,6 +127,26 @@ export const updateProject = createAsyncThunk(
   }
 )
 
+export const deleteProject = createAsyncThunk(
+  'projects/deleteProject',
+  async (id: string) => {
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    // 从localStorage获取项目数据
+    const storedProjects = localStorage.getItem('projects')
+    const projects = storedProjects ? JSON.parse(storedProjects) : mockProjects
+    
+    // 过滤掉要删除的项目
+    const updatedProjects = projects.filter((p: Project) => p.id !== id)
+    
+    // 保存到localStorage
+    localStorage.setItem('projects', JSON.stringify(updatedProjects))
+    
+    return id
+  }
+)
+
 
 
 
@@ -144,6 +164,7 @@ const projectSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // fetchProjects cases
       .addCase(fetchProjects.pending, (state) => {
         state.loading = true
       })
@@ -155,9 +176,19 @@ const projectSlice = createSlice({
         state.loading = false
         state.error = action.error.message || '获取项目列表失败'
       })
+      // createProject cases
+      .addCase(createProject.pending, (state) => {
+        state.loading = true
+      })
       .addCase(createProject.fulfilled, (state, action) => {
+        state.loading = false
         state.projects.push(action.payload)
       })
+      .addCase(createProject.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || '创建项目失败'
+      })
+      // fetchProjectById cases
       .addCase(fetchProjectById.pending, (state) => {
         state.loading = true
       })
@@ -169,12 +200,36 @@ const projectSlice = createSlice({
         state.loading = false
         state.error = action.error.message || '获取项目详情失败'
       })
+      // updateProject cases
+      .addCase(updateProject.pending, (state) => {
+        state.loading = true
+      })
       .addCase(updateProject.fulfilled, (state, action) => {
-        const index = state.projects.findIndex(p => p.id === action.payload.id)
+        state.loading = false
+        const index = state.projects.findIndex(project => project.id === action.payload.id)
         if (index !== -1) {
           state.projects[index] = action.payload
         }
         state.currentProject = action.payload
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || '更新项目失败'
+      })
+      // deleteProject cases
+      .addCase(deleteProject.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.loading = false
+        state.projects = state.projects.filter(project => project.id !== action.payload)
+        if (state.currentProject && state.currentProject.id === action.payload) {
+          state.currentProject = null
+        }
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || '删除项目失败'
       })
   },
 })

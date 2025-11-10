@@ -4,7 +4,8 @@ import {
   CalendarOutlined, 
   FileTextOutlined, 
   EditOutlined,
-  EyeOutlined
+  EyeOutlined,
+  DeleteOutlined
 } from '@ant-design/icons'
 import { Project } from '../types/project'
 import Button from './Button'
@@ -13,12 +14,13 @@ interface ProjectCardProps {
   project: Project
   onView?: (project: Project) => void
   onEdit?: (project: Project) => void
+  onDelete?: (project: Project) => void
   listView?: boolean
 }
 
 const { Text } = Typography
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit, listView = false }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit, onDelete, listView = false }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return '#14B8A6'
@@ -98,9 +100,23 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onView, onEdit, list
               variant="text" 
               icon={<EyeOutlined />} 
               onClick={() => onView?.(project)}
-            >
-              查看
-            </Button>
+              title="查看"
+            />
+            <Button 
+              variant="text" 
+              icon={<EditOutlined />} 
+              onClick={() => onEdit?.(project)}
+              title="编辑"
+            />
+            {onDelete && (
+              <Button 
+                variant="text" 
+                icon={<DeleteOutlined />} 
+                danger
+                onClick={() => onDelete(project)}
+                title="删除"
+              />
+            )}
             <Button 
               variant="text" 
               icon={<EditOutlined />} 
