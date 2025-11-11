@@ -33,11 +33,11 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
   }, {} as Record<string, typeof skills>)
 
   return (
-    <div style={{ backgroundColor: '#fff', padding: '1.5cm', fontFamily: 'Microsoft YaHei, Arial, sans-serif' }}>
-      {/* 个人信息区域 - 按图片格式重新设计 */}
-        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <div style={{ backgroundColor: '#fff', padding: '1.5cm', fontFamily: 'Microsoft YaHei, Arial, sans-serif', maxWidth: '210mm', margin: '0 auto' }}>
+      {/* 个人信息区域 */}
+        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', minHeight: '200px' }}>
           {/* 左侧个人信息 */}
-          <div style={{ flex: 1, marginRight: '20px' }}>
+          <div style={{ flex: 1, marginRight: '30px' }}>
             {/* 姓名居中 */}
             <div style={{ textAlign: 'center', marginBottom: '10px' }}>
               <Title level={1} style={{ margin: 0, color: '#000', fontWeight: 'bold', fontSize: '28px' }}>
@@ -45,8 +45,8 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
               </Title>
             </div>
             
-            {/* 详细个人信息行 - 移除前缀文字，只保留关键词 */}
-            <div style={{ fontSize: '14px', color: '#333', marginBottom: '10px', display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center' }}>
+            {/* 详细个人信息行 - 优化显示格式 */}
+            <div style={{ fontSize: '14px', color: '#333', marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', lineHeight: '1.5' }}>
               {personalInfo.gender && <span>{personalInfo.gender}</span>}
               {personalInfo.age && <span>|</span>}
               {personalInfo.age && <span>{personalInfo.age}</span>}
@@ -68,7 +68,7 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
           </div>
           
           {/* 右侧照片区域 */}
-          <div style={{}}>
+          <div style={{ flexShrink: 0, width: '120px', height: '160px' }}>
             {onPhotoChange && (
               <PhotoUploader 
                 photo={personalInfo.photo || ''} 
@@ -78,12 +78,12 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
           </div>
         </div>
 
-      {/* 1. 教育背景 - 第一位 */}
-      <div style={{ marginBottom: '30px' }}>
-        <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
+      {/* 1. 教育背景 - 第一位，增加与上方的间距 */}
+      <div style={{ marginBottom: '30px', paddingTop: '10px' }}>
+        <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px', fontWeight: '600' }}>
           教育背景
         </Title>
-        <div style={{ height: '2px', backgroundColor: '#000', marginBottom: '15px' }}></div>
+        <div style={{ height: '2px', backgroundColor: '#000', marginBottom: '20px' }}></div>
         {education.map((edu) => (
           <div key={edu.id} style={{ marginBottom: '15px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
@@ -171,16 +171,11 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
           </Title>
           <div style={{ height: '2px', backgroundColor: '#000', marginBottom: '15px' }}></div>
           {projects.map((project, index) => (
-            <div key={index} style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+            <div key={index} style={{ marginBottom: '15px' }}>
+              <div style={{ marginBottom: '5px' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: '16px', color: '#2c3e50' }}>
-                  {project.title || `项目 ${index + 1}`}
+                  项目参与 {index + 1}
                 </Text>
-                {project.date && (
-                  <Text style={{ color: '#7f8c8d', fontSize: '14px' }}>
-                    {project.date}
-                  </Text>
-                )}
               </div>
               <Text style={{ fontSize: '15px', color: '#3498db', marginBottom: '5px', display: 'block' }}>
                 角色: {project.role}

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Typography, Button, Space, Card, message, Dropdown, Menu, Divider } from 'antd'
+import { Typography, Button, Space, Card, message, Dropdown } from 'antd'
 import { FileSyncOutlined, DownloadOutlined, DownOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import ResumeTemplateSelector from '../components/resume-templates/ResumeTemplateSelector'
 import ResumeExporter from '../utils/resumeExporter'
-import PhotoUploader from '../components/PhotoUploader'
 import { fetchProjects } from '../store/slices/projectSlice'
 import type { Resume, ProjectReference } from '../types/resume'
 import type { Project } from '../types/project'
@@ -216,7 +215,20 @@ const Resume: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2}>简历生成</Title>
         <Space>
-          <Button type="primary" icon={<FileSyncOutlined />} loading={loading} onClick={handleGenerateResume}>
+          <Button 
+            type="primary" 
+            icon={<FileSyncOutlined />} 
+            loading={loading} 
+            onClick={handleGenerateResume}
+            style={{
+              padding: '6px 16px',
+              fontSize: '14px',
+              borderRadius: '6px',
+              boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
+              transition: 'all 0.3s ease'
+            }}
+            danger={false}
+          >
             AI生成简历
           </Button>
           {resume && (
@@ -239,7 +251,18 @@ const Resume: React.FC = () => {
                   }
                 ]
               }}>
-                <Button type="default" icon={<DownloadOutlined />}>
+                <Button 
+                  type="default" 
+                  icon={<DownloadOutlined />}
+                  style={{
+                    padding: '6px 16px',
+                    fontSize: '14px',
+                    borderRadius: '6px',
+                    borderColor: '#d9d9d9',
+                    transition: 'all 0.3s ease'
+                  }}
+
+                >
                   下载简历 <DownOutlined />
                 </Button>
               </Dropdown>
@@ -267,7 +290,19 @@ const Resume: React.FC = () => {
                   点击上方按钮使用AI智能生成您的个性化简历
                 </p>
               </div>
-              <Button type="primary" size="large" icon={<FileSyncOutlined />} onClick={handleGenerateResume}>
+              <Button 
+                type="primary" 
+                size="large" 
+                icon={<FileSyncOutlined />} 
+                onClick={handleGenerateResume}
+                style={{
+                  padding: '10px 24px',
+                  fontSize: '16px',
+                  borderRadius: '6px',
+                  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
                 开始生成简历
               </Button>
             </Space>

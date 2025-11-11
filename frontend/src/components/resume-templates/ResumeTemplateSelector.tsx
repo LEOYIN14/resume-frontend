@@ -7,12 +7,14 @@ interface ResumeTemplateSelectorProps {
   resume: Resume
   selectedTemplate: string
   onTemplateChange: (template: string) => void
+  onPhotoChange?: (photo: string) => void
 }
 
 const ResumeTemplateSelector: React.FC<ResumeTemplateSelectorProps> = ({
   resume,
   selectedTemplate,
-  onTemplateChange
+  onTemplateChange,
+  onPhotoChange
 }) => {
   return (
     <div>
@@ -28,7 +30,7 @@ const ResumeTemplateSelector: React.FC<ResumeTemplateSelectorProps> = ({
 
         {/* 模板预览 */}
         <Card>
-          {selectedTemplate === 'standard' && <StandardResumeTemplate resume={resume} />}
+          {selectedTemplate === 'standard' && <StandardResumeTemplate resume={resume} onPhotoChange={onPhotoChange} />}
           {/* 其他模板会在这里条件渲染 */}
         </Card>
       </Space>
