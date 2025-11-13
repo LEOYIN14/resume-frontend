@@ -6,7 +6,8 @@ import {
   FileTextOutlined, 
   ToolOutlined,
   SettingOutlined,
-  AppstoreOutlined
+  AppstoreOutlined,
+  DatabaseOutlined
 } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -31,6 +32,11 @@ const Sidebar: React.FC = () => {
       key: '/resume',
       icon: <FileTextOutlined />,
       label: '简历生成',
+    },
+    {
+      key: '/resume/library',
+      icon: <DatabaseOutlined />,
+      label: '简历库',
     },
     {
       key: '/skills',

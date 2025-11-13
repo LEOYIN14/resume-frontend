@@ -8,20 +8,30 @@ const { Title, Text, Paragraph } = Typography
 interface StandardResumeTemplateProps {
   resume: Resume
   onPhotoChange?: (photo: string) => void
+  onSectionClick?: (section: string) => void
+  isEditing?: boolean
 }
 
 /**
  * 标准简历模板组件 - 严格按照用户指定模板顺序设计
  */
-const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume, onPhotoChange }) => {
+const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume, onPhotoChange, onSectionClick, isEditing = true }) => {
   const { personalInfo, experiences, education, skills, summary, projects } = resume
 
   // 格式化日期显示
-  const formatDate = (dateString: string, endDateString?: string) => {
-    if (!endDateString || endDateString === 'present') {
-      return `${new Date(dateString).getFullYear()} 至今`
+  const formatDate = (dateString?: string, endDateString?: string) => {
+    if (!dateString) return '';
+    
+    try {
+      const startYear = new Date(dateString).getFullYear()
+      if (!endDateString || endDateString === 'present' || endDateString === '至今') {
+        return `${startYear} 至今`
+      }
+      const endYear = new Date(endDateString).getFullYear()
+      return `${startYear} - ${endYear}`
+    } catch (error) {
+      return dateString
     }
-    return `${new Date(dateString).getFullYear()} - ${new Date(endDateString).getFullYear()}`
   }
 
   // 按类别分组技能
@@ -33,53 +43,230 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
   }, {} as Record<string, typeof skills>)
 
   return (
-    <div style={{ backgroundColor: '#fff', padding: '1.5cm', fontFamily: 'Microsoft YaHei, Arial, sans-serif', maxWidth: '210mm', margin: '0 auto' }}>
+    <div style={{
+      backgroundColor: '#fff',
+      width: '210mm', // A4宽度
+      minHeight: '297mm', // A4高度
+      padding: '1.5cm',
+      fontFamily: 'Microsoft YaHei, Arial, sans-serif',
+      margin: '0 auto',
+      boxShadow: '0 0 10px rgba(0,0,0,0.1)', // 添加阴影提升视觉效果
+      boxSizing: 'border-box', // 确保padding不影响整体尺寸
+    }}>
       {/* 个人信息区域 */}
-        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', minHeight: '200px' }}>
-          {/* 左侧个人信息 */}
-          <div style={{ flex: 1, marginRight: '30px' }}>
-            {/* 姓名居中 */}
-            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-              <Title level={1} style={{ margin: 0, color: '#000', fontWeight: 'bold', fontSize: '28px' }}>
-                {personalInfo.name}
-              </Title>
-            </div>
-            
-            {/* 详细个人信息行 - 优化显示格式 */}
-            <div style={{ fontSize: '14px', color: '#333', marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', lineHeight: '1.5' }}>
-              {personalInfo.gender && <span>{personalInfo.gender}</span>}
-              {personalInfo.age && <span>|</span>}
-              {personalInfo.age && <span>{personalInfo.age}</span>}
-              {personalInfo.hometown && <span>|</span>}
-              {personalInfo.hometown && <span>{personalInfo.hometown}</span>}
-              {personalInfo.height && <span>|</span>}
-              {personalInfo.height && <span>{personalInfo.height}</span>}
-              {personalInfo.marriageStatus && <span>|</span>}
-              {personalInfo.marriageStatus && <span>{personalInfo.marriageStatus}</span>}
-              {personalInfo.politicalStatus && <span>|</span>}
-              {personalInfo.politicalStatus && <span>{personalInfo.politicalStatus}</span>}
-            </div>
-            
-            {/* 联系方式 */}
-            <div style={{ fontSize: '14px', color: '#333', textAlign: 'center' }}>
-              {personalInfo.phone && <span style={{ marginRight: '15px' }}>{personalInfo.phone}</span>}
-              {personalInfo.email && <span>{personalInfo.email}</span>}
-            </div>
+        <div 
+          style={{ 
+            marginBottom: '30px', 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            position: 'relative',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            borderRadius: '8px',
+            padding: '10px',
+            ...(isEditing && {
+              ':hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              }
+            })
+          }}
+          onMouseEnter={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+              // 显示编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'block';
+              }
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+              // 隐藏编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'none';
+              }
+            }
+          }}
+        >
+          {isEditing && (
+            <button 
+              className="edit-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSectionClick && onSectionClick('personalInfo');
+              }}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                padding: '6px 12px',
+                backgroundColor: '#1890ff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                display: 'none',
+                zIndex: 10
+              }}
+            >
+              编辑
+            </button>
+          )}
+        {/* 左侧个人信息 */}
+        <div style={{ flex: 1, marginRight: '30px' }}>
+          {/* 姓名居中 */}
+          <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+            <Title level={1} style={{ margin: 0, color: '#000', fontWeight: 'bold', fontSize: '28px' }}>
+              {personalInfo.name}
+            </Title>
           </div>
           
-          {/* 右侧照片区域 */}
-          <div style={{ flexShrink: 0, width: '120px', height: '160px' }}>
-            {onPhotoChange && (
+          {/* 详细个人信息行 - 优化显示格式 */}
+          <div style={{ fontSize: '14px', color: '#333', marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', lineHeight: '1.5' }}>
+            {personalInfo.gender && <span>{personalInfo.gender}</span>}
+            {personalInfo.age && <span>|</span>}
+            {personalInfo.age && <span>{personalInfo.age}</span>}
+            {personalInfo.hometown && <span>|</span>}
+            {personalInfo.hometown && <span>{personalInfo.hometown}</span>}
+            {personalInfo.height && <span>|</span>}
+            {personalInfo.height && <span>{personalInfo.height}</span>}
+            {personalInfo.marriageStatus && <span>|</span>}
+            {personalInfo.marriageStatus && <span>{personalInfo.marriageStatus}</span>}
+            {personalInfo.politicalStatus && <span>|</span>}
+            {personalInfo.politicalStatus && <span>{personalInfo.politicalStatus}</span>}
+          </div>
+          
+          {/* 联系方式 */}
+          <div style={{ fontSize: '14px', color: '#333', textAlign: 'center' }}>
+            {personalInfo.phone && <span style={{ marginRight: '15px' }}>{personalInfo.phone}</span>}
+            {personalInfo.email && <span>{personalInfo.email}</span>}
+            {personalInfo.location && <span style={{ marginLeft: '15px' }}>{personalInfo.location}</span>}
+          </div>
+        </div>
+        
+        {/* 右侧照片区域 - 优化照片显示 */}
+        <div style={{ flexShrink: 0 }}>
+          {onPhotoChange ? (
+            // 编辑模式：使用PhotoUploader
+            <div style={{ width: '150px', height: '200px' }}>
               <PhotoUploader 
                 photo={personalInfo.photo || ''} 
                 onChange={onPhotoChange} 
               />
-            )}
-          </div>
+            </div>
+          ) : personalInfo.photo ? (
+            // 预览模式：直接显示照片，确保完整显示
+            <div style={{
+              width: '150px',
+              height: '200px',
+              border: '1px solid #d9d9d9',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f5f5f5'
+            }}>
+              <img 
+                src={personalInfo.photo} 
+                alt="头像" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover' // 保持图片比例，可能会裁剪部分内容
+                  // objectFit: 'contain' // 完整显示图片，但可能有空白区域
+                }} 
+              />
+            </div>
+          ) : (
+            // 无照片时的占位符
+            <div style={{
+              width: '150px',
+              height: '200px',
+              border: '1px dashed #d9d9d9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#fafafa',
+              color: '#999',
+              fontSize: '12px'
+            }}>
+              暂无照片
+            </div>
+          )}
         </div>
+      </div>
 
       {/* 1. 教育背景 - 第一位，增加与上方的间距 */}
-      <div style={{ marginBottom: '30px', paddingTop: '10px' }}>
+      <div 
+        style={{ 
+          marginBottom: '30px', 
+          paddingTop: '10px',
+          position: 'relative',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          borderRadius: '8px',
+          padding: '10px',
+          ...(isEditing && {
+            ':hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }
+          })
+        }}
+        onMouseEnter={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            // 显示编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'block';
+            }
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+            // 隐藏编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'none';
+            }
+          }
+        }}
+      >
+        {isEditing && (
+          <button 
+            className="edit-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSectionClick && onSectionClick('education');
+            }}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              padding: '6px 12px',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              display: 'none',
+              zIndex: 10
+            }}
+          >
+            编辑
+          </button>
+        )}
         <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px', fontWeight: '600' }}>
           教育背景
         </Title>
@@ -109,7 +296,68 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
 
       {/* 2. 自我简评 - 第二位 */}
       {summary && (
-        <div style={{ marginBottom: '30px' }}>
+        <div 
+          style={{ 
+            marginBottom: '30px',
+            position: 'relative',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            borderRadius: '8px',
+            padding: '10px',
+            ...(isEditing && {
+              ':hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              }
+            })
+          }}
+          onMouseEnter={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+              // 显示编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'block';
+              }
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+              // 隐藏编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'none';
+              }
+            }
+          }}
+        >
+          {isEditing && (
+            <button 
+              className="edit-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSectionClick && onSectionClick('summary');
+              }}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                padding: '6px 12px',
+                backgroundColor: '#1890ff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                display: 'none',
+                zIndex: 10
+              }}
+            >
+              编辑
+            </button>
+          )}
           <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
             自我简评
           </Title>
@@ -121,7 +369,68 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
       )}
 
       {/* 3. 工作背景 - 第三位 */}
-      <div style={{ marginBottom: '30px' }}>
+      <div 
+        style={{ 
+          marginBottom: '30px',
+          position: 'relative',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          borderRadius: '8px',
+          padding: '10px',
+          ...(isEditing && {
+            ':hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }
+          })
+        }}
+        onMouseEnter={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            // 显示编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'block';
+            }
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+            // 隐藏编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'none';
+            }
+          }
+        }}
+      >
+        {isEditing && (
+          <button 
+            className="edit-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSectionClick && onSectionClick('experiences');
+            }}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              padding: '6px 12px',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              display: 'none',
+              zIndex: 10
+            }}
+          >
+            编辑
+          </button>
+        )}
         <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
           工作背景
         </Title>
@@ -165,7 +474,68 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
 
       {/* 4. 项目经验 - 第四位 */}
       {projects && projects.length > 0 && (
-        <div style={{ marginBottom: '30px' }}>
+        <div 
+          style={{ 
+            marginBottom: '30px',
+            position: 'relative',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            borderRadius: '8px',
+            padding: '10px',
+            ...(isEditing && {
+              ':hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              }
+            })
+          }}
+          onMouseEnter={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+              // 显示编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'block';
+              }
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (isEditing) {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+              // 隐藏编辑按钮
+              const editBtn = e.currentTarget.querySelector('.edit-button');
+              if (editBtn) {
+                (editBtn as HTMLElement).style.display = 'none';
+              }
+            }
+          }}
+        >
+          {isEditing && (
+            <button 
+              className="edit-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSectionClick && onSectionClick('projects');
+              }}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                padding: '6px 12px',
+                backgroundColor: '#1890ff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                display: 'none',
+                zIndex: 10
+              }}
+            >
+              编辑
+            </button>
+          )}
           <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
             项目经验
           </Title>
@@ -198,19 +568,142 @@ const StandardResumeTemplate: React.FC<StandardResumeTemplateProps> = ({ resume,
       )}
 
       {/* 5. 活动经历 - 第五位 (添加的新部分) */}
-      <div style={{ marginBottom: '30px' }}>
+      <div 
+        style={{ 
+          marginBottom: '30px',
+          position: 'relative',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          borderRadius: '8px',
+          padding: '10px',
+          ...(isEditing && {
+            ':hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }
+          })
+        }}
+        onMouseEnter={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            // 显示编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'block';
+            }
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+            // 隐藏编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'none';
+            }
+          }
+        }}
+      >
+        {isEditing && (
+          <button 
+            className="edit-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSectionClick && onSectionClick('activities');
+            }}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              padding: '6px 12px',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              display: 'none',
+              zIndex: 10
+            }}
+          >
+            编辑
+          </button>
+        )}
         <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
           活动经历
         </Title>
         <div style={{ height: '2px', backgroundColor: '#000', marginBottom: '15px' }}></div>
-        {/* 目前没有活动经历数据，显示占位信息 */}
-        <Paragraph style={{ fontSize: '14px', color: '#7f8c8d', fontStyle: 'italic' }}>
-          暂无活动经历信息
-        </Paragraph>
+        {/* 活动经历部分暂时使用空数组 */}
+        <Text style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+          暂无活动经历
+        </Text>
       </div>
 
       {/* 6. 其他资质 - 第六位 (添加的新部分) */}
-      <div style={{ marginBottom: '30px' }}>
+      <div 
+        style={{ 
+          marginBottom: '30px',
+          cursor: isEditing ? 'pointer' : 'default',
+          position: 'relative',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          borderRadius: '8px',
+          padding: '10px',
+          ...(isEditing && {
+            ':hover': {
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }
+          })
+        }}
+        onMouseEnter={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            // 显示编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'block';
+            }
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (isEditing) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+            // 隐藏编辑按钮
+            const editBtn = e.currentTarget.querySelector('.edit-button');
+            if (editBtn) {
+              (editBtn as HTMLElement).style.display = 'none';
+            }
+          }
+        }}
+      >
+        {isEditing && (
+          <button 
+            className="edit-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSectionClick && onSectionClick('skills');
+            }}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              padding: '6px 12px',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              display: 'none',
+              zIndex: 10
+            }}
+          >
+            编辑
+          </button>
+        )}
         <Title level={4} style={{ color: '#2c3e50', marginBottom: '15px', borderLeft: '4px solid #3498db', paddingLeft: '10px' }}>
           其他资质
         </Title>
